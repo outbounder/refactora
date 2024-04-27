@@ -28,8 +28,7 @@ export class Conversation {
     });
 
     rl.on("close", () => {
-      dotconfig.set("messages", messages);
-      console.log("Session ended. Messages saved.");
+      console.log("Session ended.");
     });
   }
 }

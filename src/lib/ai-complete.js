@@ -1,7 +1,6 @@
 // Define functions for AI tools
 import aiTools from "./ai-tools.js";
 import { OpenAI } from "openai";
-const openai = new OpenAI();
 
 // Generate dynamic tools object
 const generateTools = function (service) {
@@ -23,6 +22,7 @@ const generateTools = function (service) {
 
 // Main function to run conversation with OpenAI
 async function complete({ input, context, model = "gpt-4-turbo-2024-04-09" }) {
+  const openai = new OpenAI();
   const startTime = Date.now(); // Start time
   context.messages.push({
     role: "user",

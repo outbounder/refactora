@@ -2,12 +2,13 @@
   "name": "refactora",
   "version": "0.0.1",
   "type": "module",
+  "main": "./src/index.js",
   "scripts": {
-    "run": "node ./src/index.js",
+    "start": "node ./src/index.js",
     "dev": "nodemon ./src/index.js"
   },
   "bin": {
-    "refactora": "./src/index.js"
+    "refactora": "./src/bin/refactora.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
