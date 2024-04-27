@@ -1,0 +1,20 @@
+{
+  "name": "refactora",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "run": "node ./src/index.js",
+    "dev": "nodemon ./src/index.js"
+  },
+  "bin": {
+    "refactora": "./src/index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ignore": "^5.3.1",
+    "openai": "^4.38.0"
+  }
+}
