@@ -21,6 +21,7 @@ export class Conversation {
         console.info(response);
         console.info("----");
         console.info("totalToolsCalls", this.context.totalToolCalls);
+        console.info("context.messages.length", this.context.messages.length);
         console.info("Prompt:");
       } catch (error) {
         console.error("Error in processing response:", error);

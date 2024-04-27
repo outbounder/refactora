@@ -24,7 +24,7 @@ const generateTools = function (service) {
 async function complete({ input, context, model = "gpt-4-turbo-2024-04-09" }) {
   const openai = new OpenAI();
   const startTime = Date.now(); // Start time
-  context.messages.push({
+  context.appendMessage({
     role: "user",
     content: input,
   });
@@ -41,14 +41,14 @@ async function complete({ input, context, model = "gpt-4-turbo-2024-04-09" }) {
   console.info("got response...");
   while (response.choices[0].message.tool_calls) {
     const responseMessage = response.choices[0].message;
-    context.messages.push(responseMessage);
+    context.appendMessage(responseMessage);
     for (const toolCall of responseMessage.tool_calls) {
       const functionName = toolCall.function.name;
       const functionToCall = aiTools[functionName].function;
       const functionArgs = JSON.parse(toolCall.function.arguments);
       console.info(`starting tool call ${functionName}...`);
       const functionResponse = await functionToCall(functionArgs);
-      context.messages.push({
+      context.appendMessage({
         tool_call_id: toolCall.id,
         role: "tool",
         name: functionName,
@@ -70,7 +70,7 @@ async function complete({ input, context, model = "gpt-4-turbo-2024-04-09" }) {
   const duration = (endTime - startTime) / 1000; // Duration in seconds
   console.info(`finished complete in ${duration} seconds`);
   const finalMessage = response.choices[0].message;
-  context.messages.push(finalMessage);
+  context.appendMessage(finalMessage);
   return finalMessage;
 }
 
