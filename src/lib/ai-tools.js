@@ -3,6 +3,8 @@ import { promises as fs } from "fs";
 import path from "path";
 import ignore from "ignore";
 
+import { walkDir } from "./utils";
+
 const aiTools = {
   terminal_cmd: {
     metadata: {
@@ -52,7 +54,12 @@ const aiTools = {
       },
     },
     async function({ path }) {
-      return fs.mkdir(path, { recursive: true });
+      try {
+        await fs.mkdir(path, { recursive: true });
+        return { success: true, path };
+      } catch (e) {
+        return { success: false, error: e, path };
+      }
     },
   },
   read_file: {
@@ -105,23 +112,7 @@ const aiTools = {
       const gitignore = await fs.readFile(".gitignore", "utf8");
       ig.add(gitignore);
 
-      const walkDir = async (dir, fileList = []) => {
-        const files = await fs.readdir(dir);
-        for (const file of files) {
-          const filePath = path.join(dir, file);
-          if (!ig.ignores(filePath.replace(process.cwd() + path.sep, ""))) {
-            const stat = await fs.stat(filePath);
-            if (stat.isDirectory()) {
-              fileList = await walkDir(filePath, fileList);
-            } else {
-              fileList.push(filePath);
-            }
-          }
-        }
-        return fileList;
-      };
-
-      return walkDir(process.cwd());
+      return walkDir(process.cwd(), ig);
     },
   },
   find_in_repo: {
@@ -141,29 +132,14 @@ const aiTools = {
       const gitignore = await fs.readFile(".gitignore", "utf8");
       ig.add(gitignore);
 
-      const walkDir = async (dir, fileList = []) => {
-        const files = await fs.readdir(dir);
-        for (const file of files) {
-          const filePath = path.join(dir, file);
-          if (!ig.ignores(filePath.replace(process.cwd() + path.sep, ""))) {
-            const stat = await fs.stat(filePath);
-            if (stat.isDirectory()) {
-              fileList = await walkDir(filePath, fileList);
-            } else {
-              const fileContent = await fs.readFile(filePath, "utf8");
-              if (
-                file.includes(searchString) ||
-                fileContent.includes(searchString)
-              ) {
-                fileList.push(filePath);
-              }
-            }
-          }
-        }
-        return fileList;
-      };
-
-      return walkDir(process.cwd());
+      const fileList = await walkDir(process.cwd(), ig);
+      return fileList.filter(async (filePath) => {
+        const file = path.basename(filePath);
+        const fileContent = await fs.readFile(filePath, "utf8");
+        return (
+          file.includes(searchString) || fileContent.includes(searchString)
+        );
+      });
     },
   },
   replace_in_repo: {
@@ -184,43 +160,32 @@ const aiTools = {
       const gitignore = await fs.readFile(".gitignore", "utf8");
       ig.add(gitignore);
 
-      const walkDir = async (dir, fileList = []) => {
-        const files = await fs.readdir(dir);
-        for (let file of files) {
-          let filePath = path.join(dir, file);
-          if (!ig.ignores(filePath.replace(process.cwd() + path.sep, ""))) {
-            const stat = await fs.stat(filePath);
-            if (stat.isDirectory()) {
-              fileList = await walkDir(filePath, fileList);
-            } else {
-              let fileContent = await fs.readFile(filePath, "utf8");
-              if (
-                file.includes(searchString) ||
-                fileContent.includes(searchString)
-              ) {
-                fileContent = fileContent.replace(
-                  new RegExp(searchString, "g"),
-                  replaceString
-                );
-                await fs.writeFile(filePath, fileContent, "utf8");
-                if (file.includes(searchString)) {
-                  const newFile = file.replace(
-                    new RegExp(searchString, "g"),
-                    replaceString
-                  );
-                  const newFilePath = path.join(dir, newFile);
-                  await fs.rename(filePath, newFilePath);
-                  filePath = newFilePath;
-                }
-                fileList.push(filePath);
-              }
-            }
-          }
-        }
-        return fileList;
-      };
+      const fileList = await walkDir(process.cwd(), ig);
+      const updatedFiles = [];
 
-      return walkDir(process.cwd());
+      for (let filePath of fileList) {
+        let file = path.basename(filePath);
+        let fileContent = await fs.readFile(filePath, "utf8");
+        if (file.includes(searchString) || fileContent.includes(searchString)) {
+          fileContent = fileContent.replace(
+            new RegExp(searchString, "g"),
+            replaceString
+          );
+          await fs.writeFile(filePath, fileContent, "utf8");
+          if (file.includes(searchString)) {
+            const newFile = file.replace(
+              new RegExp(searchString, "g"),
+              replaceString
+            );
+            const newFilePath = path.join(path.dirname(filePath), newFile);
+            await fs.rename(filePath, newFilePath);
+            filePath = newFilePath;
+          }
+          updatedFiles.push(filePath);
+        }
+      }
+
+      return updatedFiles;
     },
   },
 };
