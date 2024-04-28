@@ -1,3 +1,6 @@
+import { promises as fs } from "fs";
+import path from "path";
+
 export async function walkDir(dir, ig, fileList = []) {
   const files = await fs.readdir(dir);
   for (const file of files) {

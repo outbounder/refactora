@@ -3,7 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import ignore from "ignore";
 
-import { walkDir } from "./utils";
+import { walkDir } from "./utils.js";
 
 const aiTools = {
   terminal_cmd: {
@@ -13,16 +13,17 @@ const aiTools = {
       parameters: {
         type: "object",
         properties: {
-          cmd: { type: "string" },
+          cmd: { type: "string", description: "command" },
+          cwd: { type: "string", description: "working directory" },
         },
         required: ["cmd"],
       },
     },
-    async function({ cmd }) {
+    async function({ cmd, cwd }) {
       return new Promise((resolve, reject) => {
-        exec(cmd, (error, stdout, stderr) => {
+        exec(cmd, { cwd }, (error, stdout, stderr) => {
           if (error) {
-            reject({ code: error.code, output: stderr });
+            reject({ code: error.code, output: stdout, error: stderr });
           } else {
             resolve({ code: 0, output: stdout });
           }

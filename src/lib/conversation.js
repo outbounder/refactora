@@ -13,7 +13,6 @@ export class Conversation {
       output: process.stdout,
     });
 
-    let messages = [];
     console.info("Prompt:");
     rl.on("line", async (input) => {
       try {

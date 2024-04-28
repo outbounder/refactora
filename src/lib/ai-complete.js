@@ -47,13 +47,23 @@ async function complete({ input, context, model = "gpt-4-turbo-2024-04-09" }) {
       const functionToCall = aiTools[functionName].function;
       const functionArgs = JSON.parse(toolCall.function.arguments);
       console.info(`starting tool call ${functionName}...`);
-      const functionResponse = await functionToCall(functionArgs);
-      context.appendMessage({
-        tool_call_id: toolCall.id,
-        role: "tool",
-        name: functionName,
-        content: JSON.stringify(functionResponse),
-      });
+      try {
+        const functionResponse = await functionToCall(functionArgs);
+        context.appendMessage({
+          tool_call_id: toolCall.id,
+          role: "tool",
+          name: functionName,
+          content: JSON.stringify(functionResponse),
+        });
+      } catch (error) {
+        console.error(error);
+        context.appendMessage({
+          tool_call_id: toolCall.id,
+          role: "tool",
+          name: functionName,
+          content: `Error: ${JSON.stringify(error)}`,
+        });
+      }
       context.totalToolCalls += 1;
       console.info(`finished tool call ${functionName}`);
     }
