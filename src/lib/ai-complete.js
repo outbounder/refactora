@@ -43,29 +43,32 @@ async function complete({ input, context, model = "gpt-4-turbo-2024-04-09" }) {
     const responseMessage = response.choices[0].message;
     context.appendMessage(responseMessage);
     for (const toolCall of responseMessage.tool_calls) {
-      const functionName = toolCall.function.name;
-      const functionToCall = aiTools[functionName].function;
-      const functionArgs = JSON.parse(toolCall.function.arguments);
-      console.info(`starting tool call ${functionName}...`);
       try {
-        const functionResponse = await functionToCall(functionArgs);
-        context.appendMessage({
-          tool_call_id: toolCall.id,
-          role: "tool",
-          name: functionName,
-          content: JSON.stringify(functionResponse),
-        });
-      } catch (error) {
-        console.error(error);
-        context.appendMessage({
-          tool_call_id: toolCall.id,
-          role: "tool",
-          name: functionName,
-          content: `Error: ${JSON.stringify(error)}`,
-        });
+        const functionName = toolCall.function.name;
+        const functionToCall = aiTools[functionName].function;
+        const functionArgs = JSON.parse(toolCall.function.arguments);
+        console.info(`starting tool call ${functionName}...`);
+        try {
+          const functionResponse = await functionToCall(functionArgs);
+          context.appendMessage({
+            tool_call_id: toolCall.id,
+            role: "tool",
+            name: functionName,
+            content: JSON.stringify(functionResponse),
+          });
+        } catch (error) {
+          context.appendMessage({
+            tool_call_id: toolCall.id,
+            role: "tool",
+            name: functionName,
+            content: `Error: ${JSON.stringify(error)}`,
+          });
+        }
+        context.totalToolCalls += 1;
+        console.info(`finished tool call ${functionName}`);
+      } catch (e) {
+        console.error("failed tool call", toolCall);
       }
-      context.totalToolCalls += 1;
-      console.info(`finished tool call ${functionName}`);
     }
     console.info("starting tools response...");
     response = await openai.chat.completions.create({

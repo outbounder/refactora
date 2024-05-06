@@ -152,17 +152,47 @@ const aiTools = {
         properties: {
           searchString: { type: "string" },
           replaceString: { type: "string" },
+          includePaths: {
+            type: "array",
+            items: { type: "string" },
+            description:
+              "uses filePath.includes(path), path should be relative to the repo",
+          },
+          excludePaths: {
+            type: "array",
+            items: { type: "string" },
+            description:
+              "uses filePath.includes(path), path should be relative to the repo",
+          },
         },
         required: ["searchString", "replaceString"],
       },
     },
-    async function({ searchString, replaceString }) {
+    async function({
+      searchString,
+      replaceString,
+      includePaths = [],
+      excludePaths = [],
+    }) {
       const ig = ignore();
       const gitignore = await fs.readFile(".gitignore", "utf8");
       ig.add(gitignore);
 
-      const fileList = await walkDir(process.cwd(), ig);
+      let fileList = await walkDir(process.cwd(), ig);
       const updatedFiles = [];
+
+      // Filter files based on includePaths and excludePaths
+      fileList = fileList.filter((filePath) => {
+        const shouldInclude =
+          includePaths.length > 0
+            ? includePaths.some((path) => filePath.includes(path))
+            : true;
+        const shouldExclude =
+          excludePaths.length > 0
+            ? excludePaths.some((path) => filePath.includes(path))
+            : false;
+        return shouldInclude && !shouldExclude;
+      });
 
       for (let filePath of fileList) {
         let file = path.basename(filePath);
