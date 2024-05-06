@@ -26,9 +26,13 @@ export class Conversation {
       console.info("Prompt:");
       rl.on("line", async (input) => {
         try {
-          const response = await this.ai.execute(input, this.context);
+          const { response, duration } = await this.ai.execute(
+            input,
+            this.context
+          );
           console.info(response);
           console.info("----");
+          console.info(`finished complete in ${duration} seconds`);
           console.info("totalToolsCalls", this.context.totalToolCalls);
           console.info("context.messages.length", this.context.messages.length);
           console.info("Prompt:");

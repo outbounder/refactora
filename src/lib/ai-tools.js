@@ -5,7 +5,40 @@ import ignore from "ignore";
 
 import { walkDir } from "./utils.js";
 
+import set_memory from "./memory/set_memory.js";
+
 const aiTools = {
+  set_memory,
+  get_memory: {
+    metadata: {
+      description:
+        "Gets a value to a name from runtime memory. Useful to get intermediate data like plan for execution, progress, expectations, requirements and other data",
+      parameters: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+        },
+        required: ["name"],
+      },
+    },
+    async function({ name }) {
+      return memory[name];
+    },
+  },
+  list_memory: {
+    metadata: {
+      description:
+        "Gets a list of all memory names. Useful to get a list of what is stored in memory",
+      parameters: {
+        type: "object",
+        properties: {},
+        required: [],
+      },
+    },
+    async function({}) {
+      return Object.keys(memory);
+    },
+  },
   terminal_cmd: {
     metadata: {
       description:

@@ -81,10 +81,10 @@ async function complete({ input, context, model = "gpt-4-turbo-2024-04-09" }) {
   }
   const endTime = Date.now(); // End time
   const duration = (endTime - startTime) / 1000; // Duration in seconds
-  console.info(`finished complete in ${duration} seconds`);
+
   const finalMessage = response.choices[0].message;
   context.appendMessage(finalMessage);
-  return finalMessage;
+  return { response: finalMessage, duration };
 }
 
 export { complete };
