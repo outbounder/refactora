@@ -49,7 +49,7 @@ async function complete({ input, context, model = "gpt-4-turbo-2024-04-09" }) {
         const functionArgs = JSON.parse(toolCall.function.arguments);
         console.info(`starting tool call ${functionName}...`);
         try {
-          const functionResponse = await functionToCall(functionArgs);
+          const functionResponse = await functionToCall(functionArgs, context);
           context.appendMessage({
             tool_call_id: toolCall.id,
             role: "tool",

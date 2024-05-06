@@ -1,4 +1,4 @@
-import { exec } from "child_process";
+import { exec, fork } from "child_process";
 import { promises as fs } from "fs";
 import path from "path";
 import ignore from "ignore";
@@ -21,6 +21,34 @@ const aiTools = {
     },
     async function({ cmd, cwd }) {
       return new Promise((resolve, reject) => {
+        exec(cmd, { cwd }, (error, stdout, stderr) => {
+          if (error) {
+            reject({ code: error.code, output: stdout, error: stderr });
+          } else {
+            resolve({ code: 0, output: stdout });
+          }
+        });
+      });
+    },
+  },
+  fork_ai_agent: {
+    metadata: {
+      description:
+        "Fork an Refactora AI agent to do a job. It can do everything Refactora can do. Useful to do parallel tasks agains set of files & other assignments.",
+      parameters: {
+        type: "object",
+        properties: {
+          prompt: {
+            type: "string",
+            description: "the task description the ai agent to execute",
+          },
+        },
+        required: ["prompt"],
+      },
+    },
+    async function({ prompt }, { selfDirectory }) {
+      return new Promise((resolve, reject) => {
+        const cmd = `node ${selfDirectory}/bin/refactora ${prompt}`;
         exec(cmd, { cwd }, (error, stdout, stderr) => {
           if (error) {
             reject({ code: error.code, output: stdout, error: stderr });

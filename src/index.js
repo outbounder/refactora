@@ -9,5 +9,8 @@ const __dirname = dirname(__filename);
 console.info("running at ", process.cwd());
 console.info("loading .env from ", __dirname);
 dotenv.config({ path: __dirname + "/../.env" });
-const conversation = new Conversation("gpt-4-turbo-2024-04-09");
-conversation.start();
+const conversation = new Conversation(
+  process.env.MODEL || "gpt-4-turbo-2024-04-09",
+  __dirname
+);
+conversation.start(process.env.PROMPT);

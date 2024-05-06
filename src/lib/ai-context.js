@@ -1,5 +1,6 @@
 export class Context {
-  constructor(messages = []) {
+  constructor(selfDirectory, messages = []) {
+    this.selfDirectory = selfDirectory;
     this.messages = messages;
     this.totalToolCalls = 0;
   }
