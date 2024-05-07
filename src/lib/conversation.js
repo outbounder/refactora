@@ -5,7 +5,6 @@ import readline from "readline";
 export class Conversation {
   constructor(model, selfDirectory) {
     this.context = new Context(selfDirectory);
-
     this.ai = new Ai(model, this.context);
   }
   async start(prompt) {

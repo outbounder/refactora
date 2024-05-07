@@ -1,4 +1,6 @@
 import { complete } from "./ai-complete.js";
+import fork_ai_agent from "./ai-tools/fork_ai_agent.js";
+import aiTools from "./ai-tools.js";
 
 export class Ai {
   constructor(model, context) {
@@ -7,18 +9,22 @@ export class Ai {
     this.context.messages.push({
       role: "system",
       content: `You're Refactora. 
-          Intelligent and highly adaptive software for assistance within the current code base and working git repo.
+          Intelligent assistant within the current working git repo.
           You can support users at any code related task.
           You can fork yourself to execute parallel repo-wide changes.
+          You have a limited length of messages, however you can use memory tools to persist information.
+          Everytime when you do planning use the memory with name 'plan' and return to it accordingly.
         `,
     });
   }
   async execute(input) {
     try {
+      const tools = generateTools(aiTools);
       return complete({
         input,
         context: this.context,
         model: this.model,
+        tools,
       });
     } catch (error) {
       console.error(error);

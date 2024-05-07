@@ -2,33 +2,19 @@
 import aiTools from "./ai-tools.js";
 import { OpenAI } from "openai";
 
-// Generate dynamic tools object
-const generateTools = function (service) {
-  const tools = [];
-  for (const [key, serviceFunction] of Object.entries(service)) {
-    if (serviceFunction.metadata) {
-      tools.push({
-        type: "function",
-        function: {
-          name: key,
-          description: serviceFunction.metadata.description,
-          parameters: serviceFunction.metadata.parameters,
-        },
-      });
-    }
-  }
-  return tools;
-};
-
 // Main function to run conversation with OpenAI
-async function complete({ input, context, model = "gpt-4-turbo-2024-04-09" }) {
+async function complete({
+  input,
+  context,
+  model = "gpt-4-turbo-2024-04-09",
+  tools,
+}) {
   const openai = new OpenAI();
   const startTime = Date.now(); // Start time
   context.appendMessage({
     role: "user",
     content: input,
   });
-  const tools = generateTools(aiTools);
 
   console.info("starting complete...");
   let response = await openai.chat.completions.create({

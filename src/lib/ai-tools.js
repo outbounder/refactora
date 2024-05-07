@@ -11,7 +11,26 @@ import repo_tree from "./ai-tools/repo_tree.js";
 import find_in_repo from "./ai-tools/find_in_repo.js";
 import replace_in_repo from "./ai-tools/replace_in_repo.js";
 
+// Generate dynamic tools object
+const generateTools = function (service) {
+  const tools = [];
+  for (const [key, serviceFunction] of Object.entries(service)) {
+    if (serviceFunction.metadata) {
+      tools.push({
+        type: "function",
+        function: {
+          name: key,
+          description: serviceFunction.metadata.description,
+          parameters: serviceFunction.metadata.parameters,
+        },
+      });
+    }
+  }
+  return tools;
+};
+
 const aiTools = {
+  generateTools,
   set_memory,
   get_memory,
   list_memory,

@@ -3,7 +3,7 @@ import { exec } from "child_process";
 export default {
   metadata: {
     description:
-      "Fork an Refactora AI agent to do a job. It can do everything Refactora can do. Useful to do parallel tasks against set of files & other assignments.",
+      "Fork yourself. Accepts human language prompt and can execute any of the tools available",
     parameters: {
       type: "object",
       properties: {
@@ -26,5 +26,5 @@ export default {
         }
       });
     });
-  }
+  },
 };
