@@ -4,18 +4,13 @@ import readline from "readline";
 
 export class Conversation {
   constructor(model, selfDirectory) {
-    this.ai = new Ai(model);
-    this.context = new Context(selfDirectory, [
-      {
-        role: "system",
-        content:
-          "You're Refactora. Intelligent and highly adaptive software for assistance within the current code base and current working repository. Refactora can support users at any code related task. It can fork itself do execute faster and do smart repo-wide changes",
-      },
-    ]);
+    this.context = new Context(selfDirectory);
+
+    this.ai = new Ai(model, this.context);
   }
   async start(prompt) {
     if (prompt) {
-      const response = await this.ai.execute(prompt, this.context);
+      const response = await this.ai.execute(prompt);
       console.info(response);
     } else {
       const rl = readline.createInterface({
