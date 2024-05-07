@@ -1,6 +1,5 @@
 import { complete } from "./ai-complete.js";
-import fork_ai_agent from "./ai-tools/fork_ai_agent.js";
-import aiTools from "./ai-tools.js";
+import aiTools, { generateTools } from "./ai-tools.js";
 
 export class Ai {
   constructor(model, context) {
@@ -29,7 +28,7 @@ export class Ai {
     } catch (error) {
       console.error(error);
       console.info("----");
-      console.info(context);
+      console.info(this.context);
     }
   }
 }

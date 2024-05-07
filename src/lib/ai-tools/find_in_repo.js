@@ -3,6 +3,8 @@ import ignore from "ignore";
 
 import { walkDir } from "../utils.js";
 
+import path from "path";
+
 const find_in_repo = {
   metadata: {
     description:

@@ -12,7 +12,7 @@ import find_in_repo from "./ai-tools/find_in_repo.js";
 import replace_in_repo from "./ai-tools/replace_in_repo.js";
 
 // Generate dynamic tools object
-const generateTools = function (service) {
+export const generateTools = function (service) {
   const tools = [];
   for (const [key, serviceFunction] of Object.entries(service)) {
     if (serviceFunction.metadata) {
