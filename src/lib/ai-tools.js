@@ -2,7 +2,7 @@ import set_memory from "./ai-tools/memory/set_memory.js";
 import get_memory from "./ai-tools/memory/get_memory.js";
 import list_memory from "./ai-tools/memory/list_memory.js";
 import terminal_cmd from "./ai-tools/terminal_cmd.js";
-import fork_ai_agent from "./ai-tools/fork_ai_agent.js";
+import spawn_ai_agent from "./ai-tools/spawn_ai_agent.js";
 import cwd from "./ai-tools/cwd.js";
 import create_dir from "./ai-tools/create_dir.js";
 import read_file from "./ai-tools/read_file.js";
@@ -35,7 +35,7 @@ const aiTools = {
   get_memory,
   list_memory,
   terminal_cmd,
-  fork_ai_agent,
+  spawn_ai_agent,
   cwd,
   create_dir,
   read_file,

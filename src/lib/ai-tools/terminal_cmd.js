@@ -3,7 +3,7 @@ import { exec } from "child_process";
 const terminal_cmd = {
   metadata: {
     description:
-      "Spawn an unix terminal cmd and get its status code and output once done. The cmd is always started in repo's root forlder.",
+      "Spawn an unix terminal cmd and get its status code and output once done",
     parameters: {
       type: "object",
       properties: {

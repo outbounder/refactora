@@ -2,19 +2,27 @@ import { complete } from "./ai-complete.js";
 import aiTools, { generateTools } from "./ai-tools.js";
 
 export class Ai {
-  constructor(model, context) {
+  constructor({ model, context, master = true }) {
     this.model = model;
     this.context = context;
-    this.context.messages.push({
-      role: "system",
-      content: `You're Refactora. 
-          Intelligent assistant within the current working git repo.
-          You can support users at any code related task.
-          You can fork yourself to execute parallel repo-wide changes.
-          You have a limited length of messages, however you can use memory tools to persist information.
-          Everytime when you do planning use the memory with name 'plan' and return to it accordingly.
-        `,
-    });
+    this.master = master;
+    if (this.master) {
+      this.context.messages.push({
+        role: "system",
+        content: `You're Refactora Master - an ai agent within the current working directory and git repo.
+            You support users at any code related request.
+            Once a task is done you check is it complete and if not you continue iterating until it is verified complete.
+          `,
+      });
+    } else {
+      // fork
+      this.context.messages.push({
+        role: "system",
+        content: `You're Refactora Fork - an ai agent within the current working directory and git repo.
+            You're spawned from Refactora Master to do a specific task.
+          `,
+      });
+    }
   }
   async execute(input) {
     try {

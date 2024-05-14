@@ -43,6 +43,7 @@ async function complete({
             content: JSON.stringify(functionResponse),
           });
         } catch (error) {
+          console.error(error);
           context.appendMessage({
             tool_call_id: toolCall.id,
             role: "tool",
