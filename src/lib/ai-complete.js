@@ -33,7 +33,7 @@ async function complete({
         const functionName = toolCall.function.name;
         const functionToCall = aiTools[functionName].function;
         const functionArgs = JSON.parse(toolCall.function.arguments);
-        console.info(`starting tool call ${functionName}...`);
+        console.info(`starting tool call ${functionName} ${functionArgs}`);
         try {
           const functionResponse = await functionToCall(functionArgs, context);
           context.appendMessage({

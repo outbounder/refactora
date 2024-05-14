@@ -3,7 +3,7 @@ import { memory } from "./store.js";
 const list_memory = {
   metadata: {
     description:
-      "Gets a list of all memory names. Useful to get a list of what is stored in memory",
+      "Gets a list of all stored names from shared memory without their values",
     parameters: {
       type: "object",
       properties: {},

@@ -5,8 +5,7 @@ import { memory } from "./store.js";
 // Function and metadata definition
 const set_memory = {
   metadata: {
-    description:
-      "Sets a value to a name in runtime memory. Useful to store intermediate data like plan for execution, progress, expectations, requirements and other data",
+    description: "Sets a value to a name in shared memory.",
     parameters: {
       type: "object",
       properties: {
