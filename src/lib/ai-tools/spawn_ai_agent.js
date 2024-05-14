@@ -19,19 +19,23 @@ export default {
           type: "string",
           description: "the task description the ai agent to execute",
         },
+        debug: {
+          type: "boolean",
+          description: "will run the tool in debug mode",
+        },
       },
       required: ["prompt"],
     },
   },
-  async function({ prompt }, { selfDirectory }) {
-    // console.log("[to -> fork]", prompt);
+  async function({ prompt, debug }, { selfDirectory }) {
+    if (debug) console.log("[to -> fork]", prompt);
     context.selfDirectory = selfDirectory;
     const ai = new Ai({
       model,
       context,
     });
     const response = await ai.execute(prompt);
-    // console.log("[from fork]", response);
+    if (debug) console.log("[from fork]", response);
     return response;
   },
 };

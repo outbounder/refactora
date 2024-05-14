@@ -24,19 +24,23 @@ export default {
           type: "string",
           description: "the task description the ai agent to execute",
         },
+        debug: {
+          type: "boolean",
+          description: "will run the tool in debug mode",
+        },
       },
       required: ["prompt"],
     },
   },
-  async function({ prompt }, { selfDirectory }) {
-    console.log("[to -> refactor]", prompt);
+  async function({ prompt, debug = false }, { selfDirectory }) {
+    if (debug) console.log("[to -> refactor]", prompt);
     context.selfDirectory = selfDirectory;
     const ai = new Ai({
       model,
       context,
     });
     const response = await ai.execute(prompt);
-    console.log("[from refactor]", response);
+    if (debug) console.log("[from refactor]", response);
     return response;
   },
 };
