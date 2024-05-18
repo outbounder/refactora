@@ -19,7 +19,7 @@ async function complete({ input, context, model = "gpt-4o", tools }) {
     tool_choice: "auto",
   });
 
-  console.info("got response...");
+  console.info(`${context.messages.length} got response...`);
   while (response.choices[0].message.tool_calls) {
     const responseMessage = response.choices[0].message;
     context.appendMessage(responseMessage);
@@ -28,9 +28,14 @@ async function complete({ input, context, model = "gpt-4o", tools }) {
         const functionName = toolCall.function.name;
         const functionToCall = aiTools[functionName].function;
         const functionArgs = JSON.parse(toolCall.function.arguments);
-        console.info(
-          `${context.messages.length} starting tool call ${functionName}`
-        );
+        let isFinished = false;
+        setTimeout(() => {
+          if (!isFinished) {
+            console.info(
+              `${context.messages.length} started tool call ${functionName}`
+            );
+          }
+        }, 1000);
         try {
           const functionResponse = await functionToCall(functionArgs, context);
           context.appendMessage({
@@ -48,11 +53,13 @@ async function complete({ input, context, model = "gpt-4o", tools }) {
             content: `Error: ${JSON.stringify(error)}`,
           });
         }
+        isFinished = true;
         context.totalToolCalls += 1;
         console.info(
           `${context.messages.length} finished tool call ${functionName}`
         );
       } catch (e) {
+        console.log(e);
         console.error("failed tool call", toolCall);
       }
     }
@@ -63,7 +70,7 @@ async function complete({ input, context, model = "gpt-4o", tools }) {
       tools: tools,
       tool_choice: "auto",
     });
-    console.info(`got tools response...`);
+    console.info(`${context.messages.length} got tools response...`);
   }
   const endTime = Date.now(); // End time
   const duration = (endTime - startTime) / 1000; // Duration in seconds
