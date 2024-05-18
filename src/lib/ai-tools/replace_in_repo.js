@@ -1,7 +1,4 @@
-import { promises as fs } from "fs";
 import path from "path";
-import ignore from "ignore";
-
 import { walkDir } from "../utils.js";
 
 const replace_in_repo = {
@@ -35,11 +32,7 @@ const replace_in_repo = {
     includePaths = [],
     excludePaths = [],
   }) {
-    const ig = ignore();
-    const gitignore = await fs.readFile(".gitignore", "utf8");
-    ig.add(gitignore);
-
-    let fileList = await walkDir(process.cwd(), ig);
+    let fileList = await walkDir(process.cwd());
     const updatedFiles = [];
 
     // Filter files based on includePaths and excludePaths

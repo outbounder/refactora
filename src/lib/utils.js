@@ -1,15 +1,30 @@
 import { promises as fs } from "fs";
 import path from "path";
+import ignore from "ignore";
 
-export async function walkDir(dir, ig, fileList = []) {
+async function createIgnoreInstance(dir, parentIg = null) {
+  const ig = parentIg ? ignore().add(parentIg) : ignore();
+  const gitignorePath = path.join(dir, ".gitignore");
+  try {
+    const gitignore = await fs.readFile(gitignorePath, "utf8");
+    ig.add(gitignore);
+  } catch (err) {
+    // If .gitignore doesn't exist, ignore the error
+  }
+  return ig;
+}
+
+export async function walkDir(dir, fileList = [], parentIg = null) {
+  const ig = await createIgnoreInstance(dir, parentIg);
   const files = await fs.readdir(dir);
   for (const file of files) {
     const filePath = path.join(dir, file);
     if (filePath.includes(".git")) continue;
-    if (!ig.ignores(filePath.replace(process.cwd() + path.sep, ""))) {
+    const relativePath = path.relative(process.cwd(), filePath);
+    if (!ig.ignores(relativePath)) {
       const stat = await fs.stat(filePath);
       if (stat.isDirectory()) {
-        fileList = await walkDir(filePath, ig, fileList);
+        fileList = await walkDir(filePath, fileList, ig);
       } else {
         fileList.push(filePath);
       }

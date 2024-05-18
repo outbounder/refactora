@@ -1,6 +1,3 @@
-import { promises as fs } from "fs";
-import ignore from "ignore";
-
 import { walkDir } from "../utils.js";
 
 import path from "path";
@@ -18,11 +15,7 @@ const find_in_repo = {
     },
   },
   async function({ searchString }) {
-    const ig = ignore();
-    const gitignore = await fs.readFile(".gitignore", "utf8");
-    ig.add(gitignore);
-
-    const fileList = await walkDir(process.cwd(), ig);
+    const fileList = await walkDir(process.cwd());
     return fileList.filter(async (filePath) => {
       const file = path.basename(filePath);
       const fileContent = await fs.readFile(filePath, "utf8");
