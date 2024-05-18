@@ -1,17 +1,18 @@
 import { Ai } from "../ai.js";
 import { Context } from "../ai-context.js";
+import aiTools, { generateTools } from "../ai-tools.js";
 
-const model = "gpt-4-turbo-2024-04-09";
+const model = "gpt-4o";
 const context = new Context({
   systemMessage: `You're Refactora Fork - an ai agent within the current working directory and git repo.
-        You're spawned from Refactora Master to do a specific task.
-      `,
+    You're spawned from Refactora Master to do a specific task.
+  `,
 });
 
 export default {
   metadata: {
     description:
-      "Spawn ai agent. Accepts human language prompt and can execute having the same tools available. The agent has access to the shared memory.",
+      "Spawn ai agent with Refactora's tools. The agent has access to the shared memory with Refactora accessible through tools.",
     parameters: {
       type: "object",
       properties: {
@@ -34,7 +35,10 @@ export default {
       model,
       context,
     });
-    const response = await ai.execute(prompt);
+    const response = await ai.execute({
+      input: prompt,
+      tools: generateTools(aiTools),
+    });
     if (debug) console.log("[from fork]", response);
     return response;
   },

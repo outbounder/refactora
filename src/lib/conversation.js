@@ -1,6 +1,7 @@
 import { Context } from "./ai-context.js";
 import { Ai } from "./ai.js";
 import readline from "readline";
+import aiTools, { generateTools } from "./ai-tools.js";
 
 export class Conversation {
   constructor(model, selfDirectory) {
@@ -13,9 +14,13 @@ export class Conversation {
       context: this.context,
     });
   }
-  async start(prompt) {
-    if (prompt) {
-      const response = await this.ai.execute(prompt);
+  async start(startInput) {
+    const tools = generateTools(aiTools);
+    if (startInput) {
+      const response = await this.ai.execute({
+        input: startInput,
+        tools,
+      });
       console.info(response);
     } else {
       const rl = readline.createInterface({
@@ -26,10 +31,10 @@ export class Conversation {
       console.info("Prompt:");
       rl.on("line", async (input) => {
         try {
-          const { response, duration } = await this.ai.execute(
+          const { response, duration } = await this.ai.execute({
             input,
-            this.context
-          );
+            tools,
+          });
           console.info(response);
           console.info("----");
           console.info(`finished complete in ${duration} seconds`);

@@ -10,7 +10,7 @@ import write_file from "./ai-tools/write_file.js";
 import repo_tree from "./ai-tools/repo_tree.js";
 import find_in_repo from "./ai-tools/find_in_repo.js";
 import replace_in_repo from "./ai-tools/replace_in_repo.js";
-import refactor_file from "./ai-tools/refactor_file.js";
+import delete_file from "./ai-tools/delete_file.js";
 
 // Generate dynamic tools object
 export const generateTools = function (service) {
@@ -44,7 +44,7 @@ const aiTools = {
   repo_tree,
   find_in_repo,
   replace_in_repo,
-  refactor_file,
+  delete_file,
 };
 
 export default aiTools;

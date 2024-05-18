@@ -1,14 +1,12 @@
 import { complete } from "./ai-complete.js";
-import aiTools, { generateTools } from "./ai-tools.js";
 
 export class Ai {
   constructor({ model, context }) {
     this.model = model;
     this.context = context;
   }
-  async execute(input) {
+  async execute({ input, tools }) {
     try {
-      const tools = generateTools(aiTools);
       return complete({
         input,
         context: this.context,

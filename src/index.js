@@ -12,8 +12,5 @@ if (process.argv[2]) {
 console.info("running at ", process.cwd());
 console.info("loading .env from ", __dirname);
 dotenv.config({ path: __dirname + "/../.env" });
-const conversation = new Conversation(
-  process.env.MODEL || "gpt-4-turbo-2024-04-09",
-  __dirname
-);
+const conversation = new Conversation(process.env.MODEL || "gpt-4o", __dirname);
 conversation.start(process.env.PROMPT);
