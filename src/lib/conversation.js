@@ -7,7 +7,7 @@ export class Conversation {
   constructor(model, selfDirectory) {
     this.context = new Context({
       selfDirectory,
-      systemMessage: `You're Refactora Master - an ai agent within the current working directory and git repo.`,
+      systemMessage: `You're Refactora - an AI within the current working directory and git repo.`,
     });
     this.ai = new Ai({
       model,

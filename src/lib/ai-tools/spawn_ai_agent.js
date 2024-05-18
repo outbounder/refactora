@@ -4,21 +4,20 @@ import aiTools, { generateTools } from "../ai-tools.js";
 
 const model = "gpt-4o";
 const context = new Context({
-  systemMessage: `You're Refactora Fork - an ai agent within the current working directory and git repo.
-    You're spawned from Refactora Master to do a specific task.
+  systemMessage: `You're spawned Refactora Fork - an ai agent within the current working directory and git repo.
+    You're spawned from Refactora to do a specific task.
   `,
 });
 
 export default {
   metadata: {
-    description:
-      "Spawn ai agent with Refactora's tools. The agent has access to the shared memory with Refactora accessible through tools.",
+    description: "Spawn ai agent with Refactora's tools.",
     parameters: {
       type: "object",
       properties: {
         prompt: {
           type: "string",
-          description: "the task description the ai agent to execute",
+          description: "task description the ai agent to execute",
         },
         debug: {
           type: "boolean",
