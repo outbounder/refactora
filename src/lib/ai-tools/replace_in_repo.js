@@ -1,5 +1,6 @@
 import path from "path";
 import { walkDir } from "../utils.js";
+import { promises as fs } from "fs";
 
 const replace_in_repo = {
   metadata: {
