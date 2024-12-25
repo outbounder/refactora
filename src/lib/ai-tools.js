@@ -11,6 +11,7 @@ import repo_tree from "./ai-tools/repo_tree.js";
 import find_in_repo from "./ai-tools/find_in_repo.js";
 import replace_in_repo from "./ai-tools/replace_in_repo.js";
 import delete_file from "./ai-tools/delete_file.js";
+import move_file from "./ai-tools/move.js";
 
 // Generate dynamic tools object
 export const generateTools = function (service) {
@@ -45,6 +46,7 @@ const aiTools = {
   find_in_repo,
   replace_in_repo,
   delete_file,
+  move_file,
 };
 
 export default aiTools;

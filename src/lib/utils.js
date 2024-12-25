@@ -32,3 +32,35 @@ export async function walkDir(dir, fileList = [], parentIg = null) {
   }
   return fileList;
 }
+
+export async function walkDirWithDepth(
+  dir,
+  depth = Infinity,
+  fileList = [],
+  parentIg = null,
+  currentDepth = 0
+) {
+  if (currentDepth > depth) return fileList;
+  const ig = await createIgnoreInstance(dir, parentIg);
+  const files = await fs.readdir(dir);
+  for (const file of files) {
+    const filePath = path.join(dir, file);
+    if (filePath.includes(".git")) continue;
+    const relativePath = path.relative(process.cwd(), filePath);
+    if (!ig.ignores(relativePath)) {
+      const stat = await fs.stat(filePath);
+      if (stat.isDirectory()) {
+        fileList = await walkDirWithDepth(
+          filePath,
+          depth,
+          fileList,
+          ig,
+          currentDepth + 1
+        );
+      } else {
+        fileList.push(filePath);
+      }
+    }
+  }
+  return fileList;
+}

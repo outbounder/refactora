@@ -14,7 +14,7 @@ async function complete({ input, context, model = "gpt-4o", tools }) {
   console.info(`${context.messages.length} starting complete...`);
   let response = await openai.chat.completions.create({
     model,
-    messages: context.messages,
+    messages: context.getMessagesTruncated(),
     tools: tools,
     tool_choice: "auto",
   });
@@ -28,14 +28,13 @@ async function complete({ input, context, model = "gpt-4o", tools }) {
         const functionName = toolCall.function.name;
         const functionToCall = aiTools[functionName].function;
         const functionArgs = JSON.parse(toolCall.function.arguments);
-        let isFinished = false;
-        setTimeout(() => {
-          if (!isFinished) {
-            console.info(
-              `${context.messages.length} started tool call ${functionName}`
-            );
-          }
-        }, 1000);
+        console.info(
+          `${
+            context.messages.length
+          } started tool call ${functionName} with ${JSON.stringify(
+            functionArgs
+          )}`
+        );
         try {
           const functionResponse = await functionToCall(functionArgs, context);
           context.appendMessage({
@@ -53,7 +52,6 @@ async function complete({ input, context, model = "gpt-4o", tools }) {
             content: `Error: ${JSON.stringify(error)}`,
           });
         }
-        isFinished = true;
         context.totalToolCalls += 1;
         console.info(
           `${context.messages.length} finished tool call ${functionName}`
@@ -66,7 +64,7 @@ async function complete({ input, context, model = "gpt-4o", tools }) {
     console.info(`${context.messages.length} starting tools response...`);
     response = await openai.chat.completions.create({
       model,
-      messages: context.messages,
+      messages: context.getMessagesTruncated(),
       tools: tools,
       tool_choice: "auto",
     });
